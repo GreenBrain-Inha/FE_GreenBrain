@@ -8,6 +8,7 @@ import SidebarLayout from '@/components/SidebarLayout'
 import NavMenu from '@/components/NavMenu'
 import { useApp } from '@/contexts/AppContext'
 import { apiFetch } from '@/lib/api'
+import MarkdownContent from '@/components/MarkdownContent'
 
 interface Model {
   label: string
@@ -301,7 +302,11 @@ function ChatContent() {
                             : 'bg-white border border-gray-200'
                         }`}
                       >
-                        <p className="whitespace-pre-wrap">{message.content}</p>
+                        {message.role === 'user' ? (
+                          <p className="whitespace-pre-wrap">{message.content}</p>
+                        ) : (
+                          <MarkdownContent content={message.content} />
+                        )}
                       </div>
                     </div>
 
