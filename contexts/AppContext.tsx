@@ -61,7 +61,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (cancelled) return
         const { today_tokens, ...userFields } = data
         const onboardingCompleted = data.onboarding_completed
-          ?? (data.id ? localStorage.getItem(`greenbrain_ob_${data.id}`) === 'true' : false)
+          ?? (data.id ? localStorage.getItem(`greenbrain_ob_${data.id}`) !== 'false' : true)
         setUser({ ...userFields, onboarding_completed: onboardingCompleted })
         if (today_tokens) {
           setTokens((prev) => ({ ...prev, remaining: today_tokens.tokens_remaining }))

@@ -39,11 +39,9 @@ export default function LoginPage() {
       })
       const me = await apiFetch<UserMe>('/api/users/me')
       const { today_tokens, ...userFields } = me
-      const onboardingCompleted = me.onboarding_completed
-        ?? localStorage.getItem(`greenbrain_ob_${me.id}`) === 'true'
-      setUser({ ...userFields, onboarding_completed: onboardingCompleted })
+      setUser({ ...userFields, onboarding_completed: true })
       if (today_tokens) updateRemainingTokens(today_tokens.tokens_remaining)
-      router.push(onboardingCompleted ? '/chat' : '/onboarding')
+      router.push('/chat')
     } catch (err) {
       const status = (err as { status?: number }).status
       if (status === 401) {
