@@ -50,7 +50,7 @@ export default function SignupPage() {
       router.push('/onboarding')
     } catch (err) {
       const status = (err as { status?: number }).status
-      if (status === 400) {
+      if (status === 400 || status === 409) {
         setServerError('이미 사용 중인 이메일입니다')
       } else if (status === 422) {
         setServerError('입력 형식을 확인해주세요')
