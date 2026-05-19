@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import SidebarLayout from '@/components/SidebarLayout'
 import NavMenu from '@/components/NavMenu'
 import SkeletonCard from '@/components/SkeletonCard'
@@ -202,25 +202,6 @@ export default function ChallengeFeedPage() {
   const [feedItems, setFeedItems] = useState<FeedItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
-  const hasLoaded = useRef(false)
-
-  useEffect(() => {
-    if (hasLoaded.current) return
-    hasLoaded.current = true
-    let cancelled = false
-    async function load() {
-      try {
-        const data = await apiFetch<FeedResponse>('/api/challenges/feed?limit=20&offset=0')
-        if (!cancelled) setFeedItems(data.items)
-      } catch {
-        if (!cancelled) setError('피드를 불러오지 못했습니다.')
-      } finally {
-        if (!cancelled) setIsLoading(false)
-      }
-    }
-    load()
-    return () => { cancelled = true }
-  }, [])
 
   const loadFeed = useCallback(async () => {
     setError('')
@@ -234,6 +215,11 @@ export default function ChallengeFeedPage() {
       setIsLoading(false)
     }
   }, [])
+
+  useEffect(() => {
+    loadFeed()
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+  }, [loadFeed])
 
   async function handleLikeToggle(photoId: string): Promise<LikeResponse | void> {
     return await apiFetch<LikeResponse>('/api/challenge-photos/' + photoId + '/like', { method: 'POST' })
