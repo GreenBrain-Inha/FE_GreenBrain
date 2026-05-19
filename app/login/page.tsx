@@ -38,11 +38,12 @@ export default function LoginPage() {
         body: { email: data.email, password: data.password },
       })
       const me = await apiFetch<UserMe>('/api/users/me')
-      // console.log('[login] /api/users/me →', me)
       const { today_tokens, ...userFields } = me
-      setUser(userFields)
+      const onboardingCompleted = me.onboarding_completed
+        ?? localStorage.getItem(`greenbrain_ob_${me.id}`) === 'true'
+      setUser({ ...userFields, onboarding_completed: onboardingCompleted })
       if (today_tokens) updateRemainingTokens(today_tokens.tokens_remaining)
-      router.push('/chat')
+      router.push(onboardingCompleted ? '/chat' : '/onboarding')
     } catch (err) {
       const status = (err as { status?: number }).status
       if (status === 401) {

@@ -45,7 +45,7 @@ export default function SignupPage() {
       })
       const me = await apiFetch<UserMe>('/api/users/me')
       const { today_tokens, ...userFields } = me
-      setUser(userFields)
+      setUser({ ...userFields, onboarding_completed: false })
       if (today_tokens) updateRemainingTokens(today_tokens.tokens_remaining)
       router.push('/onboarding')
     } catch (err) {
