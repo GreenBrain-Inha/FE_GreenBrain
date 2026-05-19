@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import SidebarLayout from '@/components/SidebarLayout'
 import NavMenu from '@/components/NavMenu'
-import SkeletonCard from '../../../components/SkeletonCard'
-import EmptyState from '../../../components/EmptyState'
+import SkeletonCard from '@/components/SkeletonCard'
+import EmptyState from '@/components/EmptyState'
 import { useApp } from '@/contexts/AppContext'
 import { apiFetch } from '@/lib/api'
 
@@ -30,10 +30,13 @@ interface FeedResponse {
   offset: number
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  transport: '교통',
-  diet: '식단',
-  energy: '에너지',
+interface LikeResponse {
+  liked: boolean
+  photo_id: string
+  like_count: number
+  reward_given: boolean
+  reward_amount: number
+  tokens_remaining: number
 }
 
 function formatTime(timestamp: string): string {
@@ -57,7 +60,7 @@ function FeedCard({
   item: FeedItem
   isOwner: boolean
   onDelete: (photoId: string) => void
-  onLikeToggle: (photoId: string) => Promise<void>
+  onLikeToggle: (photoId: string) => Promise<LikeResponse | void>
 }) {
   const [likeCount, setLikeCount] = useState(item.like_count)
   const [likedByMe, setLikedByMe] = useState(item.liked_by_me)
@@ -69,13 +72,15 @@ function FeedCard({
     if (likedByMe || isOwner || likeLoading) return
     setLikeError('')
     setLikeLoading(true)
+    const prevCount = likeCount
     setLikedByMe(true)
-    setLikeCount((prev) => prev + 1)
+    setLikeCount(prevCount + 1)
     try {
-      await onLikeToggle(item.photo_id)
+      const res = await onLikeToggle(item.photo_id)
+      if (res?.like_count != null) setLikeCount(res.like_count)
     } catch {
       setLikedByMe(false)
-      setLikeCount((prev) => prev - 1)
+      setLikeCount(prevCount)
       setLikeError('좋아요에 실패했습니다.')
     } finally {
       setLikeLoading(false)
@@ -197,6 +202,25 @@ export default function ChallengeFeedPage() {
   const [feedItems, setFeedItems] = useState<FeedItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const hasLoaded = useRef(false)
+
+  useEffect(() => {
+    if (hasLoaded.current) return
+    hasLoaded.current = true
+    let cancelled = false
+    async function load() {
+      try {
+        const data = await apiFetch<FeedResponse>('/api/challenges/feed?limit=20&offset=0')
+        if (!cancelled) setFeedItems(data.items)
+      } catch {
+        if (!cancelled) setError('피드를 불러오지 못했습니다.')
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    }
+    load()
+    return () => { cancelled = true }
+  }, [])
 
   const loadFeed = useCallback(async () => {
     setError('')
@@ -211,12 +235,8 @@ export default function ChallengeFeedPage() {
     }
   }, [])
 
-  useEffect(() => {
-    loadFeed()
-  }, [loadFeed])
-
-  async function handleLikeToggle(photoId: string): Promise<void> {
-    await apiFetch('/api/challenge-photos/' + photoId + '/like', { method: 'POST' })
+  async function handleLikeToggle(photoId: string): Promise<LikeResponse | void> {
+    return await apiFetch<LikeResponse>('/api/challenge-photos/' + photoId + '/like', { method: 'POST' })
   }
 
   async function handleDelete(photoId: string) {
