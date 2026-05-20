@@ -195,6 +195,14 @@ Query:   { limit?: number; cursor?: string }
 200:     { items: ChatMessage[]; next_cursor: string | null }
 401:     Authentication required
 404:     Chat session not found
+
+GET /api/chat/models
+응답:    { items: string[] }  // 'provider/model-id' 형식 ex) "openai/gpt-5.5-2026-04-23"
+200:     조회 성공
+400:     인증 필요
+502:     RunyourAI 프로바이더 오류
+→ useModels hook에서 사용, SWR 캐싱 적용 (#72)
+→ items의 각 문자열을 파싱해 label(모델명)·provider(공급사) 도출 필요
 ```
 
 ---
