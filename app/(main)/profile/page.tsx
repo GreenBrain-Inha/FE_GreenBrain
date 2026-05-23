@@ -193,9 +193,11 @@ export default function ProfilePage() {
     setIsSavingName(true)
     setNameError('')
     try {
+      const formData = new FormData()
+      formData.append('nickname', trimmed)
       await apiFetch('/api/users/me', {
         method: 'PATCH',
-        body: { nickname: trimmed },
+        body: formData,
       })
       setUser(user ? { ...user, nickname: trimmed } : null)
       setEditingName(false)
