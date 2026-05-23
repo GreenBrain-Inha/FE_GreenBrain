@@ -88,22 +88,22 @@ interface FeedItem {
 ```
 POST /api/auth/signup
 Body:    { email: string; password: string }
-201:     { id: string; email: string; onboarding_completed: false; created_at: string }
+201:     { success: boolean; message: string; data: { id: string; email: string; onboarding_completed: false; created_at: string } }
 400:     이미 가입된 이메일
 422:     요청 형식 오류
 → 성공 시 /onboarding 이동
 
 POST /api/auth/login
 Body:    { email: string; password: string }
-200:     { message: "Login successful"; onboarding_completed: boolean }  +  HttpOnly 쿠키 access_token 발급
+200:     { success: boolean; message: string; data: { onboarding_completed: boolean } }  +  HttpOnly 쿠키 access_token 발급
 401:     이메일 또는 비밀번호 오류
 429:     로그인 5회 초과 실패 (일시 잠금)
 422:     요청 형식 오류
-→ 성공 시 onboarding_completed: true → /chat, false → /onboarding 이동
+→ 성공 시 data.onboarding_completed: true → /chat, false → /onboarding 이동
 
 POST /api/auth/logout
 Body:    없음
-200:     { message: "Logout successful" }  +  access_token 쿠키 만료 처리
+200:     { success: boolean; message: string; data: null }  +  access_token 쿠키 만료 처리
 → Context 초기화 + /login 이동
 ```
 
@@ -113,9 +113,9 @@ Body:    없음
 
 ```
 GET /api/users/me
-응답:    UserMe
+응답:    { success: boolean; message: string; data: UserMe }
 401:     인증되지 않은 사용자
-→ AppContext user, tokens 초기화에 사용
+→ AppContext user, tokens 초기화에 사용. 응답은 data 필드에서 추출
 
 PATCH /api/users/me
 Body:    multipart/form-data { nickname?: string; profile_image?: File }
@@ -124,20 +124,20 @@ Body:    multipart/form-data { nickname?: string; profile_image?: File }
 422:     요청 형식 오류
 
 GET /api/users/profile
-응답:    UserProfile & { updated_at: string }
+응답:    { success: boolean; message: string; data: UserProfile & { updated_at: string } }
 401:     인증되지 않은 사용자
 404:     생활습관 프로필 없음
 
 PATCH /api/users/profile
 Body:    { transport_mode?: string; diet_type?: string; housing_type?: string }
-200:     UserProfile & { updated_at: string }
+200:     { success: boolean; message: string; data: UserProfile & { updated_at: string } }
 401:     인증되지 않은 사용자
 404:     생활습관 프로필 없음
 422:     요청 형식 오류
 
 POST /api/users/onboarding
 Body:    { transport_mode: TransportMode; diet_type: DietType; housing_type: HousingType }
-201:     { transport_mode: TransportMode; diet_type: DietType; housing_type: HousingType }
+201:     { success: boolean; message: string; data: { transport_mode: TransportMode; diet_type: DietType; housing_type: HousingType; updated_at: string } }
 400:     인증 필요
 → 온보딩 완료 시 호출. 성공 후 AppContext user.onboarding_completed = true 갱신 + /chat 이동
 → UI 선택값 → API 값 매핑 필요:
@@ -211,9 +211,9 @@ GET /api/chat/models
 
 ```
 GET /api/tokens/today
-응답:    TokenToday
+응답:    { success: boolean; message: string; data: TokenToday }
 401:     인증되지 않은 사용자
-→ 토큰 바 표시, 챌린지 일일 상한(challenge_count >= 3) 판단에 사용
+→ 토큰 바 표시, 챌린지 일일 상한(challenge_count >= 3) 판단에 사용. 응답은 data 필드에서 추출
 ```
 
 ---

@@ -105,8 +105,8 @@ function ChatContent() {
   }, [models, selectedModel])
 
   useEffect(() => {
-    apiFetch<{ tokens_remaining: number }>('/api/tokens/today')
-      .then((data) => updateRemainingTokens(data.tokens_remaining))
+    apiFetch<{ success: boolean; message: string; data: { tokens_remaining: number } }>('/api/tokens/today')
+      .then((res) => updateRemainingTokens(res.data.tokens_remaining))
       .catch(() => {})
       .finally(() => setIsTokenLoading(false))
   }, [updateRemainingTokens])
