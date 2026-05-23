@@ -22,13 +22,13 @@
 
 | Method | Path | 설명 | 요청 타입 | 응답 타입 |
 |--------|------|------|----------|----------|
-| POST | `/api/chat/sessions` | 세션 생성 | 없음 | 201: `ChatSession` |
-| GET | `/api/chat/sessions` | 세션 목록 | `?limit&cursor` | `{ items: ChatSession[], next_cursor }` |
-| PATCH | `/api/chat/sessions/{id}` | 세션 제목 수정 | `{ title? }` | `ChatSession` |
-| DELETE | `/api/chat/sessions/{id}` | 세션 삭제 | 없음 | 204 |
-| POST | `/api/chat/sessions/{id}/messages` | 메시지 전송 | `{ message, model_id? }` | `{ response, carbon_gco2eq, tokens_remaining, exhausted, ... }` |
-| GET | `/api/chat/sessions/{id}/messages` | 메시지 목록 | `?limit&cursor` | `{ items: ChatMessage[], next_cursor }` |
-| GET | `/api/chat/models` | 모델 목록 조회 | 없음 | `{ items: string[] }` |
+| POST | `/api/chat/sessions` | 세션 생성 | 없음 | 201: `{ success, message, data: ChatSession }` |
+| GET | `/api/chat/sessions` | 세션 목록 | `?limit&cursor` | `{ success, message, data: { items: ChatSession[], next_cursor } }` |
+| PATCH | `/api/chat/sessions/{id}` | 세션 제목 수정 | `{ title? }` | `{ success, message, data: ChatSession }` |
+| DELETE | `/api/chat/sessions/{id}` | 세션 삭제 | 없음 | `{ success, message, data: null }` |
+| POST | `/api/chat/sessions/{id}/messages` | 메시지 전송 | `{ message, model_id? }` | `{ success, message, data: { response, carbon_gco2eq, tokens_remaining, exhausted, ... } }` |
+| GET | `/api/chat/sessions/{id}/messages` | 메시지 목록 | `?limit&cursor` | `{ success, message, data: { items: ChatMessage[], next_cursor } }` |
+| GET | `/api/chat/models` | 모델 목록 조회 | 없음 | `{ success, message, data: { items: string[] } }` |
 
 ## 토큰
 

@@ -153,30 +153,30 @@ Body:    { transport_mode: TransportMode; diet_type: DietType; housing_type: Hou
 ```
 POST /api/chat/sessions
 Body:    없음
-201:     ChatSession
+201:     { success: boolean; message: string; data: ChatSession }
 401:     Authentication required
-→ 새 채팅 시작 시 먼저 세션 생성, 반환된 id로 메시지 전송
+→ 새 채팅 시작 시 먼저 세션 생성, 반환된 data.id로 메시지 전송
 
 GET /api/chat/sessions
 Query:   { limit?: number; cursor?: string }
-200:     { items: ChatSession[]; next_cursor: string | null }
+200:     { success: boolean; message: string; data: { items: ChatSession[]; next_cursor: string | null } }
 401:     Authentication required
-→ ChatSidebar 히스토리 목록에 사용
+→ ChatSidebar 히스토리 목록에 사용. data.items 접근
 
 PATCH /api/chat/sessions/{session_id}
 Body:    { title?: string | null }
-200:     ChatSession
+200:     { success: boolean; message: string; data: ChatSession }
 401:     Authentication required
 404:     Chat session not found
 
 DELETE /api/chat/sessions/{session_id}
-204:     No Content
+200:     { success: boolean; message: string; data: null }
 401:     Authentication required
 404:     Chat session not found
 
 POST /api/chat/sessions/{session_id}/messages
 Body:    { message: string; model_id?: string }  // model_id: GET /api/chat/models 응답 items[]의 값을 그대로 전송, 변환 금지
-200:     {
+200:     { success: boolean; message: string; data: {
            message_id: string
            response_message_id: string
            response: string              // AI 응답 텍스트
@@ -184,7 +184,8 @@ Body:    { message: string; model_id?: string }  // model_id: GET /api/chat/mode
            tokens_remaining: number      // 항상 이 값으로 AppContext tokens 업데이트
            exhausted: boolean            // true면 토큰 소진 화면 전환
            session_title: string | null  // 자동 생성 세션 제목
-         }
+           model_id: string              // 실제 사용된 모델 ID
+         } }
 401:     Authentication required
 403:     Daily chat tokens are exhausted
 404:     Chat session not found
@@ -192,17 +193,17 @@ Body:    { message: string; model_id?: string }  // model_id: GET /api/chat/mode
 
 GET /api/chat/sessions/{session_id}/messages
 Query:   { limit?: number; cursor?: string }
-200:     { items: ChatMessage[]; next_cursor: string | null }
+200:     { success: boolean; message: string; data: { items: ChatMessage[]; next_cursor: string | null } }
 401:     Authentication required
 404:     Chat session not found
 
 GET /api/chat/models
-응답:    { items: string[] }  // 'provider/model-id' 형식 ex) "openai/gpt-5.5-2026-04-23"
+응답:    { success: boolean; message: string; data: { items: string[] } }  // 'provider/model-id' 형식 ex) "openai/gpt-5.5-2026-04-23"
 200:     조회 성공
 400:     인증 필요
 502:     RunyourAI 프로바이더 오류
 → useModels hook에서 사용, SWR 캐싱 적용 (#72)
-→ items의 값을 selectedModel state에 그대로 저장 → POST /messages의 model_id로 변환 없이 전송
+→ data.items의 값을 selectedModel state에 그대로 저장 → POST /messages의 model_id로 변환 없이 전송
 ```
 
 ---
