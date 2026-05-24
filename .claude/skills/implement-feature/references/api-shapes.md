@@ -223,38 +223,39 @@ GET /api/tokens/today
 
 ```
 GET /api/challenges/current
-응답:    { challenge: Challenge | null }
+응답:    { success: boolean; message: string; data: { challenge: Challenge | null } }
 200:     조회 성공
 401:     미인증
+→ data.challenge가 null이면 generate 호출. daily_count는 응답에 없음
 
 POST /api/challenges/generate
 Body:    없음
-200/201: { challenge: Challenge; created: boolean }
-         created=true → 새로 생성, false → 기존 진행 중 반환
+200/201: { success: boolean; message: string; data: { challenge: Challenge; created: boolean } }
+         data.created=true → 새로 생성, false → 기존 진행 중 반환
 401:     미인증
 409:     토큰이 남아 있어 챌린지 생성 불가
-429:     하루 챌린지 생성 횟수 초과 (최대 3회)
+429:     하루 챌린지 생성 횟수 초과 (최대 3회) → dailyCount=3 처리
 → 토큰 소진 시 호출
 
 POST /api/challenges/{id}/accept
 Body:    없음
-200:     { challenge: Challenge }  // status: 'active'
+200:     { success: boolean; message: string; data: { challenge: Challenge } }  // status: 'active'
 401:     미인증
 404:     챌린지 없음 또는 본인 챌린지 아님
 409:     pending_acceptance 상태 아님
 
 POST /api/challenges/{id}/photo
-Body:    FormData { file: File }  (form-data, 이미지 파일)
-200:     {
+Body:    FormData { file: File }  (form-data, 이미지 파일, 필드명 반드시 'file')
+200:     { success: boolean; message: string; data: {
            photo: { id: string; challenge_id: string; file_url: string; created_at: string }
            challenge: { id: string; status: 'completed'; completed_at: string }
            reward: { type: 'upload_reward'; reward_amount: number; tokens_remaining: number }
-         }
+         } }
 400:     파일 형식 오류 / 파일 크기 초과
 401:     미인증
 404:     챌린지 없음 또는 본인 챌린지 아님
 409:     active 상태 아님 또는 이미 사진 업로드됨
-→ 업로드 성공 시 reward.tokens_remaining으로 AppContext 업데이트
+→ 업로드 성공 시 data.reward.tokens_remaining으로 AppContext 업데이트
 ```
 
 ---
@@ -264,7 +265,7 @@ Body:    FormData { file: File }  (form-data, 이미지 파일)
 ```
 GET /api/challenges/feed
 Query:   { limit?: number; offset?: number }  // 기본값 limit=20, offset=0
-200:     { items: FeedItem[]; total: number | null; limit: number; offset: number }
+200:     { success: boolean; message: string; data: { items: FeedItem[]; total: number | null; limit: number; offset: number } }
 400:     query parameter 형식 오류
 401:     미인증
 

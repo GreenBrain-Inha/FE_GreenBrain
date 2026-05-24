@@ -40,16 +40,16 @@
 
 | Method | Path | 설명 | 요청 타입 | 응답 타입 |
 |--------|------|------|----------|----------|
-| GET | `/api/challenges/current` | 현재 챌린지 조회 | 없음 | `{ challenge: Challenge \| null }` |
-| POST | `/api/challenges/generate` | 챌린지 생성 | 없음 | 200/201: `{ challenge: Challenge; created: boolean }` |
-| POST | `/api/challenges/{id}/accept` | 챌린지 수락 | 없음 | `{ challenge: Challenge }` |
-| POST | `/api/challenges/{id}/photo` | 챌린지 인증 사진 업로드 | `FormData { file }` | `{ photo, challenge, reward }` |
+| GET | `/api/challenges/current` | 현재 챌린지 조회 | 없음 | `{ success, message, data: { challenge: Challenge \| null } }` |
+| POST | `/api/challenges/generate` | 챌린지 생성 | 없음 | 200/201: `{ success, message, data: { challenge: Challenge; created: boolean } }` |
+| POST | `/api/challenges/{id}/accept` | 챌린지 수락 | 없음 | `{ success, message, data: { challenge: Challenge } }` |
+| POST | `/api/challenges/{id}/photo` | 챌린지 인증 사진 업로드 | `FormData { file }` (필드명 'file') | `{ success, message, data: { photo, challenge, reward } }` |
 
 ## 인증 피드
 
 | Method | Path | 설명 | 요청 타입 | 응답 타입 |
 |--------|------|------|----------|----------|
-| GET | `/api/challenges/feed` | 피드 목록 | `?limit&offset` | `{ items: FeedItem[], total, limit, offset }` |
+| GET | `/api/challenges/feed` | 피드 목록 | `?limit&offset` | `{ success, message, data: { items: FeedItem[], total, limit, offset } }` |
 | DELETE | `/api/challenge-photos/{photo_id}` | 피드 삭제 | 없음 | `{ deleted, photo_id, deleted_at }` |
 
 ## 좋아요
