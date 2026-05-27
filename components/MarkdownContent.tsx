@@ -7,17 +7,21 @@ import rehypeKatex from 'rehype-katex'
  * `$$...$$` / `$...$` 형식으로 정규화한다.
  *
  * 처리 대상:
- *   \[ ... \]  →  $$ ... $$  (표준 LaTeX 디스플레이 수식)
- *   \( ... \)  →  $...$      (표준 LaTeX 인라인 수식)
- *   [ ... ]    →  $$ ... $$  (AI가 자주 쓰는 비표준 디스플레이 수식)
+ *   \[ ... \]        →  $$ ... $$  (표준 LaTeX 디스플레이)
+ *   \( ... \)        →  $...$      (표준 LaTeX 인라인)
+ *   [ formula ]      →  $$ ... $$  (AI 비표준 단독줄 표기)
+ *   $\nformula\n$    →  $$...$$    (AI가 단독 $ 로 블록 구분하는 경우)
  */
 function preprocessMath(content: string): string {
   // \[ ... \] → $$ ... $$ (표준 LaTeX 디스플레이, multiline 허용)
   content = content.replace(/\\\[([\s\S]*?)\\\]/g, '\n$$\n$1\n$$\n')
   // \( ... \) → $ ... $ (표준 LaTeX 인라인)
   content = content.replace(/\\\((.*?)\\\)/g, '$$$1$$$')
+  // 단독 줄의 $ 구분자 → $$ 구분자
+  // "$ \n formula \n $" 형태를 "$$\nformula\n$$" 으로 변환 (remark-math 인식용)
+  content = content.replace(/(?:^|\n)\$[ \t]*\n([\s\S]+?)\n\$[ \t]*(?=\n|$)/g, '\n$$\n$1\n$$')
   // [ formula ] 단독 줄 → $$ formula $$
-  // 수식 기호(^ _ \ = + - { })가 하나라도 있는 줄만 변환해 일반 괄호 텍스트와 구별
+  // 수식 기호(^ _ \ = + - { })가 하나라도 있는 줄만 변환
   content = content.replace(/^\[ (.+) \]$/gm, (_, inner: string) =>
     /[\\^_{}=+\-]/.test(inner) ? `\n$$\n${inner}\n$$\n` : `[ ${inner} ]`
   )
