@@ -2,6 +2,28 @@ import ReactMarkdown from 'react-markdown'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
 
+/**
+ * AI 응답에서 다양한 수식 표기를 remark-math가 인식하는
+ * `$$...$$` / `$...$` 형식으로 정규화한다.
+ *
+ * 처리 대상:
+ *   \[ ... \]  →  $$ ... $$  (표준 LaTeX 디스플레이 수식)
+ *   \( ... \)  →  $...$      (표준 LaTeX 인라인 수식)
+ *   [ ... ]    →  $$ ... $$  (AI가 자주 쓰는 비표준 디스플레이 수식)
+ */
+function preprocessMath(content: string): string {
+  // \[ ... \] → $$ ... $$ (multiline 허용)
+  content = content.replace(/\\\[([\s\S]*?)\\\]/g, '\n$$\n$1\n$$\n')
+  // \( ... \) → $ ... $
+  content = content.replace(/\\\((.*?)\\\)/g, '$$$1$$$')
+  // [ ... ] 단독 줄 — LaTeX 명령어(\frac, \sum 등)가 포함된 경우만 변환
+  content = content.replace(
+    /^\s*\[([^\]]*\\[a-zA-Z][^\]]*)\]\s*$/gm,
+    '\n$$\n$1\n$$\n'
+  )
+  return content
+}
+
 export default function MarkdownContent({ content }: { content: string }) {
   return (
     <ReactMarkdown
@@ -45,7 +67,7 @@ export default function MarkdownContent({ content }: { content: string }) {
         ),
       }}
     >
-      {content}
+      {preprocessMath(content)}
     </ReactMarkdown>
   )
 }
