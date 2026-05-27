@@ -18,16 +18,6 @@ export default function TokenBar({ remaining, max }: TokenBarProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <span className={`text-sm tabular-nums ${isOverflow ? 'text-blue-500 font-bold' : 'font-medium'}`}>
-        {isOverflow ? (
-          <>
-            {displayBase}
-            <span className="text-blue-400"> +{displayExtra}</span>
-          </>
-        ) : (
-          Math.round(remaining)
-        )}
-      </span>
       <div className="relative flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
         {isOverflow ? (
           <>

@@ -151,12 +151,13 @@ function ChatContent() {
         router.replace(`/chat?sid=${sessionId}`)
         invalidateSessionsCache()
       }
+      console.log("api 호출");
       const res = await apiFetch<ChatMessageResponse>(
         `/api/chat/sessions/${sessionId}/messages`,
         { method: 'POST', body: { message: text, model_id: selectedModel }, skipAutoRedirect: true }
       )
+      console.log(res);
       updateRemainingTokens(res.tokens_remaining)
-
       setMessages((prev) => [
         ...prev,
         {
@@ -167,6 +168,7 @@ function ChatContent() {
         },
       ])
     } catch (err) {
+      console.log("에러: ",err);
       const status = (err as { status?: number }).status
       if (status === 403) {
         updateRemainingTokens(0)
@@ -234,7 +236,15 @@ function ChatContent() {
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-700">탄소 토큰</span>
               <span className={`text-sm font-bold ${tokens.remaining <= 30 ? 'text-red-500' : 'text-gray-900'}`}>
-                {isTokenLoading ? '...' : `${tokens.remaining} / ${tokens.max} gCO₂eq`}
+                {isTokenLoading ? '...' : (
+                  <>
+                    {Math.round(tokens.max)}
+                    {tokens.remaining > tokens.max && (
+                      <span className="text-blue-500"> +{Math.round(tokens.remaining - tokens.max)}</span>
+                    )}
+                    {' / '}{tokens.max} gCO₂eq
+                  </>
+                )}
               </span>
             </div>
             <TokenBar remaining={isTokenLoading ? tokens.max : tokens.remaining} max={tokens.max} />
