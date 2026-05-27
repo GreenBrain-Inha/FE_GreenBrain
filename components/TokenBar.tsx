@@ -18,7 +18,7 @@ export default function TokenBar({ remaining, max }: TokenBarProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="relative flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+      <div className="relative flex-1 h-2 bg-gray-200 rounded-full">
         {isOverflow ? (
           <>
             {/* 기본 구간: 0 ~ max */}
