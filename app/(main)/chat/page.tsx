@@ -238,11 +238,13 @@ function ChatContent() {
               <span className={`text-sm font-bold ${tokens.remaining <= 30 ? 'text-red-500' : 'text-gray-900'}`}>
                 {isTokenLoading ? '...' : (
                   <>
-                    {Math.round(tokens.max)}
+                    {Math.round(tokens.remaining)}
+                    {' / '}
+                    {tokens.max}
                     {tokens.remaining > tokens.max && (
                       <span className="text-blue-500"> +{Math.round(tokens.remaining - tokens.max)}</span>
                     )}
-                    {' / '}{tokens.max} gCO₂eq
+                    {' gCO₂eq'}
                   </>
                 )}
               </span>
