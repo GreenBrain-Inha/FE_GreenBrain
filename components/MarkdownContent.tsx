@@ -12,14 +12,14 @@ import rehypeKatex from 'rehype-katex'
  *   [ ... ]    →  $$ ... $$  (AI가 자주 쓰는 비표준 디스플레이 수식)
  */
 function preprocessMath(content: string): string {
-  // \[ ... \] → $$ ... $$ (multiline 허용)
+  // \[ ... \] → $$ ... $$ (표준 LaTeX 디스플레이, multiline 허용)
   content = content.replace(/\\\[([\s\S]*?)\\\]/g, '\n$$\n$1\n$$\n')
-  // \( ... \) → $ ... $
+  // \( ... \) → $ ... $ (표준 LaTeX 인라인)
   content = content.replace(/\\\((.*?)\\\)/g, '$$$1$$$')
-  // [ ... ] 단독 줄 — LaTeX 명령어(\frac, \sum 등)가 포함된 경우만 변환
-  content = content.replace(
-    /^\s*\[([^\]]*\\[a-zA-Z][^\]]*)\]\s*$/gm,
-    '\n$$\n$1\n$$\n'
+  // [ formula ] 단독 줄 → $$ formula $$
+  // 수식 기호(^ _ \ = + - { })가 하나라도 있는 줄만 변환해 일반 괄호 텍스트와 구별
+  content = content.replace(/^\[ (.+) \]$/gm, (_, inner: string) =>
+    /[\\^_{}=+\-]/.test(inner) ? `\n$$\n${inner}\n$$\n` : `[ ${inner} ]`
   )
   return content
 }
