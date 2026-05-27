@@ -151,12 +151,10 @@ function ChatContent() {
         router.replace(`/chat?sid=${sessionId}`)
         invalidateSessionsCache()
       }
-      console.log("api 호출");
       const res = await apiFetch<ChatMessageResponse>(
         `/api/chat/sessions/${sessionId}/messages`,
         { method: 'POST', body: { message: text, model_id: selectedModel }, skipAutoRedirect: true }
       )
-      console.log(res);
       updateRemainingTokens(res.tokens_remaining)
       setMessages((prev) => [
         ...prev,
@@ -168,7 +166,6 @@ function ChatContent() {
         },
       ])
     } catch (err) {
-      console.log("에러: ",err);
       const status = (err as { status?: number }).status
       if (status === 403) {
         updateRemainingTokens(0)
