@@ -13,10 +13,20 @@ export default function TokenBar({ remaining, max }: TokenBarProps) {
   const baseColorClass =
     ratio > 0.5 ? 'bg-green-500' : ratio > 0.2 ? 'bg-amber-500' : 'bg-red-500'
 
+  const displayBase = Math.round(max)
+  const displayExtra = Math.round(remaining - max)
+
   return (
     <div className="flex items-center gap-2">
-      <span className={`text-sm tabular-nums ${isOverflow ? 'text-yellow-500 font-bold' : 'font-medium'}`}>
-        {remaining}
+      <span className={`text-sm tabular-nums ${isOverflow ? 'text-blue-500 font-bold' : 'font-medium'}`}>
+        {isOverflow ? (
+          <>
+            {displayBase}
+            <span className="text-blue-400"> +{displayExtra}</span>
+          </>
+        ) : (
+          Math.round(remaining)
+        )}
       </span>
       <div className="relative flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
         {isOverflow ? (
@@ -26,9 +36,9 @@ export default function TokenBar({ remaining, max }: TokenBarProps) {
               className="absolute inset-y-0 left-0 bg-green-500 transition-all"
               style={{ width: `${(max / OVERFLOW_CAP) * 100}%` }}
             />
-            {/* 초과 구간: max ~ remaining (상한선 OVERFLOW_CAP) */}
+            {/* 초과 구간: max ~ remaining */}
             <div
-              className="absolute inset-y-0 bg-yellow-400 transition-all"
+              className="absolute inset-y-0 bg-blue-400 transition-all"
               style={{
                 left: `${(max / OVERFLOW_CAP) * 100}%`,
                 width: `${Math.min((remaining - max) / OVERFLOW_CAP, 1 - max / OVERFLOW_CAP) * 100}%`,
