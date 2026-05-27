@@ -13,9 +13,6 @@ export default function TokenBar({ remaining, max }: TokenBarProps) {
   const baseColorClass =
     ratio > 0.5 ? 'bg-green-500' : ratio > 0.2 ? 'bg-amber-500' : 'bg-red-500'
 
-  const displayBase = Math.round(max)
-  const displayExtra = Math.round(remaining - max)
-
   return (
     <div className="flex items-center gap-2">
       <div className="relative flex-1 h-2 bg-gray-200 rounded-full">
