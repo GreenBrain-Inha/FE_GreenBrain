@@ -232,7 +232,7 @@ function ChatContent() {
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-700">탄소 토큰</span>
-              <span className={`text-sm font-bold ${tokens.remaining <= 30 ? 'text-red-500' : 'text-gray-900'}`}>
+              <span className={`text-sm font-bold ${tokens.remaining <= 3000 ? 'text-red-500' : 'text-gray-900'}`}>
                 {isTokenLoading ? '...' : (
                   <>
                     {Math.round(tokens.remaining)}
@@ -241,7 +241,7 @@ function ChatContent() {
                     {tokens.remaining > tokens.max && (
                       <span className="text-blue-500"> +{Math.round(tokens.remaining - tokens.max)}</span>
                     )}
-                    {' gCO₂eq'}
+                    {' mgCO₂eq'}
                   </>
                 )}
               </span>

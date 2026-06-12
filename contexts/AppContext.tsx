@@ -20,7 +20,7 @@ export interface User {
 
 interface Tokens {
   remaining: number  // API: tokens_remaining
-  max: number        // 고정값 150 (API 미제공)
+  max: number        // 고정값 15000 (API 미제공)
 }
 
 interface AppState {
@@ -50,7 +50,7 @@ const AppContext = createContext<AppContextValue | null>(null)
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [tokens, setTokens] = useState<Tokens>({ remaining: 150, max: 150 })
+  const [tokens, setTokens] = useState<Tokens>({ remaining: 15000, max: 15000 })
   const [isLoadingUser, setIsLoadingUser] = useState(true)
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       await apiFetch('/api/auth/logout', { method: 'POST' })
     } finally {
       setUser(null)
-      setTokens({ remaining: 150, max: 150 })
+      setTokens({ remaining: 15000, max: 15000 })
       window.location.href = '/login'
     }
   }

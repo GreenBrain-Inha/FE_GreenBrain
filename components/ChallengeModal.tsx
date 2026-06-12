@@ -240,7 +240,7 @@ export default function ChallengeModal({ open, onClose, onReward }: ChallengeMod
                   </svg>
                   <div>
                     <p className="text-sm font-medium text-amber-800">보상 안내</p>
-                    <p className="text-sm text-amber-700 mt-0.5">커뮤니티 좋아요 3개당 +20 토큰을 받을 수 있어요</p>
+                    <p className="text-sm text-amber-700 mt-0.5">커뮤니티 좋아요 3개당 +2000 토큰을 받을 수 있어요</p>
                   </div>
                 </div>
               </div>
