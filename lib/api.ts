@@ -40,7 +40,7 @@ export async function apiFetch<T>(path: string, options: FetchOptions = {}): Pro
     if (skipAutoRedirect) {
       throw { status: 401 }
     }
-    const pubPaths = ['/login', '/signup']
+    const pubPaths = ['/login', '/signup', '/']
     if (!pubPaths.some((p) => window.location.pathname.startsWith(p))) {
       window.location.href = '/login'
     }
