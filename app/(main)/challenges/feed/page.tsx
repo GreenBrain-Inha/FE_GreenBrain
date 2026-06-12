@@ -186,7 +186,7 @@ function FeedCard({
           </button>
           {item.carbon_saved_gco2eq != null && (
             <span className="text-xs text-gray-400">
-              -{item.carbon_saved_gco2eq}g CO₂
+              -{item.carbon_saved_gco2eq}mg CO₂
             </span>
           )}
         </div>
@@ -251,7 +251,7 @@ export default function ChallengeFeedPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               <p className="text-sm text-green-700">
-                인증 사진에 <span className="font-semibold">좋아요</span>를 눌러 응원해보세요! 좋아요 3개당 +20 토큰이 지급됩니다.
+                인증 사진에 <span className="font-semibold">좋아요</span>를 눌러 응원해보세요! 좋아요 3개당 +2000 토큰이 지급됩니다.
               </p>
             </div>
           </div>
