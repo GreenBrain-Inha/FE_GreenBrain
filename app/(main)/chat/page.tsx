@@ -23,7 +23,7 @@ interface ChatMessageResponse {
   message_id: string
   response_message_id: string
   response: string
-  carbon_gco2eq: number | null
+  tokens_deducted: number | null
   tokens_remaining: number
   exhausted: boolean
   session_title: string | null
@@ -34,7 +34,7 @@ interface ChatMessageFromApi {
   session_id: string
   role: 'user' | 'assistant'
   content: string
-  carbon_gco2eq: number | null
+  tokens_deducted: number | null
   created_at: string
 }
 
@@ -90,7 +90,7 @@ function ChatContent() {
             id: m.id,
             role: m.role,
             content: m.content,
-            carbonCost: m.role === 'assistant' ? m.carbon_gco2eq : undefined,
+            carbonCost: m.role === 'assistant' ? m.tokens_deducted : undefined,
           }))
         )
       })
@@ -162,7 +162,7 @@ function ChatContent() {
           id: res.response_message_id,
           role: 'assistant',
           content: res.response,
-          carbonCost: res.carbon_gco2eq,
+          carbonCost: res.tokens_deducted,
         },
       ])
     } catch (err) {
