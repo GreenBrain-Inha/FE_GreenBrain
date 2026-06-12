@@ -226,7 +226,7 @@ function ChatContent() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-3">
             {toggleButton}
-            <h1 className="text-xl font-bold text-gray-900 flex-1">GreenBrain</h1>
+            <h1 className="text-xl font-bold text-gray-900 flex-1">Anoixi</h1>
           </div>
 
           <div>
@@ -277,9 +277,7 @@ function ChatContent() {
         </div>
       ) : !hasStarted ? (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-          <div className="w-20 h-20 bg-linear-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
-            <span className="text-4xl">🌱</span>
-          </div>
+          <img src="/icon.png" alt="Anoixi" className="w-32 h-32 object-contain mb-6" />
           <h2 className="text-3xl font-bold text-gray-900 leading-snug">
             {username}님,<br />다시 오셨네요
           </h2>
