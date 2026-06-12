@@ -214,7 +214,7 @@ export default function ChatSidebar({ open, onClose }: Props) {
         <div className="flex items-center justify-between px-4 py-4 border-b border-gray-700">
           <div className="flex items-center gap-2">
             <span className="text-lg">🌱</span>
-            <span className="font-bold text-green-400 text-lg">GreenBrain</span>
+            <span className="font-bold text-green-400 text-lg">Anoixi</span>
           </div>
           <button
             onClick={onClose}

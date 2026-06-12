@@ -12,7 +12,7 @@ const geist = Geist({
 })
 
 export const metadata: Metadata = {
-  title: 'GreenBrain',
+  title: 'Anoixi',
   description: 'AI 탄소 인식 챌린지 플랫폼',
 }
 
