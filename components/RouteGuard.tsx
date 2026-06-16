@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useApp } from '@/contexts/AppContext'
 
-const PUBLIC_PATHS = ['/login', '/signup']
+const PUBLIC_PATHS = ['/login', '/signup', '/']
 const ONBOARDING_PATH = '/onboarding'
 
 export default function RouteGuard({ children }: { children: React.ReactNode }) {
