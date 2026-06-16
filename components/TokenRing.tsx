@@ -20,11 +20,11 @@ export default function TokenRing({ value }: { value: number }) {
         style={{ transition: 'stroke-dasharray 0.2s ease, stroke 0.4s ease' }}
       />
       <g style={{ transform: 'rotate(90deg)', transformOrigin: '70px 70px' }}>
-        <text x="70" y="60" textAnchor="middle" fill={color}
+        <text x="70" y="66" textAnchor="middle" fill={color}
           style={{ fontSize: '20px', fontWeight: 800, fontFamily: "'Outfit', sans-serif", transition: 'fill 0.4s' }}>
           {value.toLocaleString()}
         </text>
-        <text x="70" y="78" textAnchor="middle" fill="rgba(0,0,0,0.35)"
+        <text x="70" y="84" textAnchor="middle" fill="rgba(0,0,0,0.35)"
           style={{ fontSize: '10px', fontFamily: "'Inter', sans-serif" }}>
           / {MAX_TOKENS.toLocaleString()}
         </text>
