@@ -60,7 +60,7 @@ export default function Landing() {
       <nav className="sticky top-0 z-50 border-b border-black/[6%] backdrop-blur-[16px] bg-[rgba(240,249,242,0.92)]">
         <div className="max-w-5xl mx-auto px-6 flex items-center justify-between h-[58px]">
           <div className="flex items-center gap-2">
-            <span className="text-[1.1rem]">🌿</span>
+            <img src="/icon.png" alt="Anoixi" className="w-6 h-6 object-contain" />
             <span className="font-extrabold text-base tracking-[-0.02em] text-[#0f2016]">Anoixi</span>
           </div>
           <div className="flex items-center gap-3">
