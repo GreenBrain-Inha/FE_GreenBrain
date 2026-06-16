@@ -126,7 +126,7 @@ export default function Landing() {
           </div>
 
           {/* Token widget */}
-          <div className="bg-white border border-green-100 rounded-[18px] p-[1.8rem] flex items-center gap-[1.8rem] shadow-sm">
+          <div className="bg-white border border-green-100 rounded-[18px] p-[1.8rem] flex items-center justify-center gap-[1.8rem] shadow-sm">
             <TokenRing value={tokenVal} />
             <div>
               <div className="font-inter text-[0.68rem] text-[#0f2016]/40 font-semibold tracking-[0.08em] uppercase mb-[0.6rem]">
@@ -322,7 +322,7 @@ export default function Landing() {
             AI를 쓰기 전에<br /><span className="text-green-600">지구를 먼저</span> 생각하세요
           </h2>
           <p className="font-inter text-[#0f2016]/55 text-[0.9rem] leading-[1.75] mb-8 font-normal">
-            10,000개의 탄소 토큰을 무료로 드립니다. 채팅, 챌린지, 피드까지 — 지금 바로 시작하세요.
+            매일 10,000 탄소 토큰을 무료로 드립니다. 채팅, 챌린지, 피드까지 — 지금 바로 시작하세요.
           </p>
           <Link
             href="/signup"
@@ -330,9 +330,6 @@ export default function Landing() {
           >
             무료로 시작하기 →
           </Link>
-          <div className="font-inter mt-4 text-[0.75rem] text-[#0f2016]/35">
-            신용카드 불필요 · 무료 시작
-          </div>
         </div>
       </section>
 
