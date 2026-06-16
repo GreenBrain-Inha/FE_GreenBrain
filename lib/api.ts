@@ -41,7 +41,10 @@ export async function apiFetch<T>(path: string, options: FetchOptions = {}): Pro
       throw { status: 401 }
     }
     const pubPaths = ['/login', '/signup']
-    if (!pubPaths.some((p) => window.location.pathname.startsWith(p))) {
+    const isPublic =
+      pubPaths.some((p) => window.location.pathname.startsWith(p)) ||
+      window.location.pathname === '/'
+    if (!isPublic) {
       window.location.href = '/login'
     }
     throw new Error('Unauthorized')
