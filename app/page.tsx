@@ -17,9 +17,9 @@ const FEED_ITEMS = [
 ]
 
 const STATUS_LEVELS = [
-  { label: '여유', color: '#16a34a', range: '6,667–10,000' },
-  { label: '주의', color: '#d97706', range: '3,334–6,666' },
-  { label: '위험', color: '#dc2626', range: '0–3,333' },
+  { label: '여유', color: '#16a34a', range: '7,000–10,000' },
+  { label: '주의', color: '#d97706', range: '3,000–7,000' },
+  { label: '위험', color: '#dc2626', range: '0–3,000' },
 ]
 
 function SectionLabel({ children }: { children: string }) {
@@ -182,7 +182,7 @@ export default function Landing() {
               </h2>
               <p className="font-inter text-[#0f2016]/55 text-[0.92rem] leading-[1.8] font-normal">
                 대화 한 번에 소모되는 탄소를 토큰으로 시각화합니다.
-                처음 받는 <strong className="text-green-600">10,000개의 탄소 토큰</strong>으로
+                처음 받는 <strong className="text-green-600">10,000 탄소 토큰</strong>으로
                 AI와 자유롭게 대화하며, 내 디지털 탄소 발자국을 체감하세요.
               </p>
             </div>
