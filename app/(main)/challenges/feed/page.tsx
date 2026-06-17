@@ -55,11 +55,13 @@ function FeedCard({
   isOwner,
   onDelete,
   onLikeToggle,
+  onReward,
 }: {
   item: FeedItem
   isOwner: boolean
   onDelete: (photoId: string) => void
   onLikeToggle: (photoId: string) => Promise<LikeResponse | void>
+  onReward: (tokens: number) => void
 }) {
   const [likeCount, setLikeCount] = useState(item.like_count)
   const [likedByMe, setLikedByMe] = useState(item.liked_by_me)
@@ -77,6 +79,9 @@ function FeedCard({
     try {
       const res = await onLikeToggle(item.photo_id)
       if (res?.like_count != null) setLikeCount(res.like_count)
+      if (res?.reward_given && res.tokens_remaining != null) {
+        onReward(res.tokens_remaining)
+      }
     } catch {
       setLikedByMe(false)
       setLikeCount(prevCount)
@@ -197,7 +202,7 @@ function FeedCard({
 }
 
 export default function ChallengeFeedPage() {
-  const { user } = useApp()
+  const { user, updateRemainingTokens } = useApp()
   const { toggleButton } = useSidebar()
   const [feedItems, setFeedItems] = useState<FeedItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -289,6 +294,7 @@ export default function ChallengeFeedPage() {
                   isOwner={user?.id === item.user_id}
                   onDelete={handleDelete}
                   onLikeToggle={handleLikeToggle}
+                  onReward={updateRemainingTokens}
                 />
               ))}
             </div>
