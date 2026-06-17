@@ -213,7 +213,6 @@ function ChatContent() {
           <ChallengeModal
             open={challengeModalOpen}
             onClose={() => setChallengeModalOpen(false)}
-            onReward={(t) => updateRemainingTokens(t)}
           />
         </div>
       </div>
@@ -411,7 +410,6 @@ function ChatContent() {
       <ChallengeModal
         open={challengeModalOpen}
         onClose={() => setChallengeModalOpen(false)}
-        onReward={(t) => updateRemainingTokens(t)}
       />
     </div>
   )

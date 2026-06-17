@@ -18,7 +18,6 @@ interface ChallengeData {
 interface ChallengeModalProps {
   open: boolean
   onClose: () => void
-  onReward?: (tokensRemaining: number) => void
 }
 
 const CATEGORY_COLORS: Record<ChallengeData['category'], string> = {
@@ -39,7 +38,7 @@ const CATEGORY_ICONS: Record<ChallengeData['category'], string> = {
   energy: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z',
 }
 
-export default function ChallengeModal({ open, onClose, onReward }: ChallengeModalProps) {
+export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
   const [challenge, setChallenge] = useState<ChallengeData | null>(null)
   const [dailyCount, setDailyCount] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
@@ -141,7 +140,6 @@ export default function ChallengeModal({ open, onClose, onReward }: ChallengeMod
         `/api/challenges/${challenge.id}/photo`,
         { method: 'POST', body: formData }
       )
-      onReward?.(res.reward.tokens_remaining)
       handleClose()
     } catch {
       setFileError('업로드에 실패했습니다. 다시 시도해주세요.')
