@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { apiFetch } from '@/lib/api'
-import { useApp } from '@/contexts/AppContext'
 
 interface ChallengeData {
   id: string
@@ -17,8 +16,16 @@ interface ChallengeData {
 }
 
 interface PhotoUploadResponse {
-  reward: {
-    tokens_remaining: number
+  photo: {
+    id: string
+    challenge_id: string
+    file_url: string
+    created_at: string
+  }
+  challenge: {
+    id: string
+    status: 'completed'
+    completed_at: string
   }
 }
 
@@ -46,7 +53,6 @@ const CATEGORY_ICONS: Record<ChallengeData['category'], string> = {
 }
 
 export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
-  const { updateRemainingTokens } = useApp()
   const [challenge, setChallenge] = useState<ChallengeData | null>(null)
   const [dailyCount, setDailyCount] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
@@ -136,29 +142,21 @@ export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
   }
 
   async function handleUpload() {
-    if (!selectedFile || !challenge) return
+    if (!selectedFile || !challenge || isUploading) return
     setIsUploading(true)
     setFileError('')
     const formData = new FormData()
-    formData.append('photo', selectedFile)
+    formData.append('file', selectedFile)
 
     try {
-      const res = await apiFetch<{
-        reward?: { tokens_remaining: number }
-        remaining_tokens?: number
-        tokens_remaining?: number
-      }>(
-        `/api/challenges/${challenge.id}/verify`,
+      await apiFetch<PhotoUploadResponse>(
+        `/api/challenges/${challenge.id}/photo`,
         { method: 'POST', body: formData }
       )
-      
-      const tokens = res?.reward?.tokens_remaining ?? res?.remaining_tokens ?? res?.tokens_remaining
-      if (typeof tokens === 'number') {
-        updateRemainingTokens(tokens)
-      }
 
       handleClose()
-    } catch (err: any) {
+    } catch (apiError: unknown) {
+      const err = apiError as { data?: { message?: string } }
       setFileError(err.data?.message || '업로드에 실패했습니다. 다시 시도해주세요.')
     } finally {
       setIsUploading(false)
