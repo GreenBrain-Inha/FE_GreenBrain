@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { apiFetch } from '@/lib/api'
+import { useApp } from '@/contexts/AppContext'
 
 interface ChallengeData {
   id: string
@@ -15,10 +16,15 @@ interface ChallengeData {
   completed_at: string | null
 }
 
+interface PhotoUploadResponse {
+  reward: {
+    tokens_remaining: number
+  }
+}
+
 interface ChallengeModalProps {
   open: boolean
   onClose: () => void
-  onReward?: (tokensRemaining: number) => void
 }
 
 const CATEGORY_COLORS: Record<ChallengeData['category'], string> = {
@@ -39,7 +45,8 @@ const CATEGORY_ICONS: Record<ChallengeData['category'], string> = {
   energy: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z',
 }
 
-export default function ChallengeModal({ open, onClose, onReward }: ChallengeModalProps) {
+export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
+  const { updateRemainingTokens } = useApp()
   const [challenge, setChallenge] = useState<ChallengeData | null>(null)
   const [dailyCount, setDailyCount] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
@@ -137,14 +144,16 @@ export default function ChallengeModal({ open, onClose, onReward }: ChallengeMod
     formData.append('file', selectedFile)
 
     try {
-      const res = await apiFetch<{ photo: { id: string; challenge_id: string; file_url: string; created_at: string }; challenge: { id: string; status: string; completed_at: string }; reward: { type: string; reward_amount: number; tokens_remaining: number } }>(
+      const res = await apiFetch<PhotoUploadResponse>(
         `/api/challenges/${challenge.id}/photo`,
         { method: 'POST', body: formData }
       )
-      onReward?.(res.reward.tokens_remaining)
+      if (res.reward) {
+        updateRemainingTokens(res.reward.tokens_remaining)
+      }
       handleClose()
-    } catch {
-      setFileError('업로드에 실패했습니다. 다시 시도해주세요.')
+    } catch (err: any) {
+      setFileError(err.data?.message || '업로드에 실패했습니다. 다시 시도해주세요.')
     } finally {
       setIsUploading(false)
     }

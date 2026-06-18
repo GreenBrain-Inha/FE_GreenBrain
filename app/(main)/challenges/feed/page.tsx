@@ -61,6 +61,7 @@ function FeedCard({
   onDelete: (photoId: string) => void
   onLikeToggle: (photoId: string) => Promise<LikeResponse | void>
 }) {
+  const { updateRemainingTokens } = useApp()
   const [likeCount, setLikeCount] = useState(item.like_count)
   const [likedByMe, setLikedByMe] = useState(item.liked_by_me)
   const [likeLoading, setLikeLoading] = useState(false)
@@ -77,6 +78,9 @@ function FeedCard({
     try {
       const res = await onLikeToggle(item.photo_id)
       if (res?.like_count != null) setLikeCount(res.like_count)
+      if (res?.reward_given) {
+        updateRemainingTokens(res.tokens_remaining)
+      }
     } catch {
       setLikedByMe(false)
       setLikeCount(prevCount)
