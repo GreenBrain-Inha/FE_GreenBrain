@@ -35,7 +35,7 @@ interface LikeResponse {
   like_count: number
   reward_given: boolean
   reward_amount: number
-  tokens_remaining: number
+  tokens_remaining: number | null
 }
 
 function formatTime(timestamp: string): string {
@@ -63,7 +63,6 @@ function FeedCard({
   onLikeToggle: (photoId: string) => Promise<LikeResponse | void>
   onReward: (tokens: number) => void
 }) {
-  const { updateRemainingTokens } = useApp()
   const [likeCount, setLikeCount] = useState(item.like_count)
   const [likedByMe, setLikedByMe] = useState(item.liked_by_me)
   const [likeLoading, setLikeLoading] = useState(false)
