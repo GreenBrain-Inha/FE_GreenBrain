@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { apiFetch } from '@/lib/api'
+import { useApp } from '@/contexts/AppContext'
 
 interface ChallengeData {
   id: string
@@ -39,6 +40,7 @@ const CATEGORY_ICONS: Record<ChallengeData['category'], string> = {
 }
 
 export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
+  const { updateRemainingTokens } = useApp()
   const [challenge, setChallenge] = useState<ChallengeData | null>(null)
   const [dailyCount, setDailyCount] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
@@ -104,7 +106,6 @@ export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
   if (!open) return null
 
   const isDailyLimitReached = dailyCount >= 3
-  const cat = challenge?.category ?? 'transport'
 
   function handleClose() {
     setChallenge(null)
@@ -133,13 +134,23 @@ export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
     setIsUploading(true)
     setFileError('')
     const formData = new FormData()
-    formData.append('file', selectedFile)
+    formData.append('photo', selectedFile)
 
     try {
-      const res = await apiFetch<{ photo: { id: string; challenge_id: string; file_url: string; created_at: string }; challenge: { id: string; status: string; completed_at: string }; reward: { type: string; reward_amount: number; tokens_remaining: number } }>(
-        `/api/challenges/${challenge.id}/photo`,
+      const res = await apiFetch<{
+        reward?: { tokens_remaining: number }
+        remaining_tokens?: number
+        tokens_remaining?: number
+      }>(
+        `/api/challenges/${challenge.id}/verify`,
         { method: 'POST', body: formData }
       )
+      
+      const tokens = res?.reward?.tokens_remaining ?? res?.remaining_tokens ?? res?.tokens_remaining
+      if (typeof tokens === 'number') {
+        updateRemainingTokens(tokens)
+      }
+
       handleClose()
     } catch {
       setFileError('업로드에 실패했습니다. 다시 시도해주세요.')
