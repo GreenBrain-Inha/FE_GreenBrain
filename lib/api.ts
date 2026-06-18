@@ -7,6 +7,13 @@ type FetchOptions = Omit<RequestInit, 'body'> & {
   skipAutoRedirect?: boolean
 }
 
+export function fixStorageUrl(url: string): string
+export function fixStorageUrl(url: string | null | undefined): string | undefined
+export function fixStorageUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined
+  return url.replace('greenbrain-uploads/greenbrain-uploads/', 'greenbrain-uploads/')
+}
+
 export async function apiFetch<T>(path: string, options: FetchOptions = {}): Promise<T> {
   const { body, headers, skipAutoRedirect, ...rest } = options
 
@@ -34,7 +41,10 @@ export async function apiFetch<T>(path: string, options: FetchOptions = {}): Pro
       throw { status: 401 }
     }
     const pubPaths = ['/login', '/signup']
-    if (!pubPaths.some((p) => window.location.pathname.startsWith(p))) {
+    const isPublic =
+      pubPaths.some((p) => window.location.pathname.startsWith(p)) ||
+      window.location.pathname === '/'
+    if (!isPublic) {
       window.location.href = '/login'
     }
     throw new Error('Unauthorized')

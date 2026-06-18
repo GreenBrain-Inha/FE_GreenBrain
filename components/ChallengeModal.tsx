@@ -112,7 +112,6 @@ export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
   if (!open) return null
 
   const isDailyLimitReached = dailyCount >= 3
-  const cat = challenge?.category ?? 'transport'
 
   function handleClose() {
     setChallenge(null)
@@ -141,16 +140,23 @@ export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
     setIsUploading(true)
     setFileError('')
     const formData = new FormData()
-    formData.append('file', selectedFile)
+    formData.append('photo', selectedFile)
 
     try {
-      const res = await apiFetch<PhotoUploadResponse>(
-        `/api/challenges/${challenge.id}/photo`,
+      const res = await apiFetch<{
+        reward?: { tokens_remaining: number }
+        remaining_tokens?: number
+        tokens_remaining?: number
+      }>(
+        `/api/challenges/${challenge.id}/verify`,
         { method: 'POST', body: formData }
       )
-      if (res.reward) {
-        updateRemainingTokens(res.reward.tokens_remaining)
+      
+      const tokens = res?.reward?.tokens_remaining ?? res?.remaining_tokens ?? res?.tokens_remaining
+      if (typeof tokens === 'number') {
+        updateRemainingTokens(tokens)
       }
+
       handleClose()
     } catch (err: any) {
       setFileError(err.data?.message || '업로드에 실패했습니다. 다시 시도해주세요.')
@@ -249,7 +255,7 @@ export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
                   </svg>
                   <div>
                     <p className="text-sm font-medium text-amber-800">보상 안내</p>
-                    <p className="text-sm text-amber-700 mt-0.5">커뮤니티 좋아요 3개당 +20 토큰을 받을 수 있어요</p>
+                    <p className="text-sm text-amber-700 mt-0.5">커뮤니티 좋아요 3개당 +2000 토큰을 받을 수 있어요</p>
                   </div>
                 </div>
               </div>

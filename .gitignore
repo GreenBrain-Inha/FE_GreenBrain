@@ -28,3 +28,6 @@ next-env.d.ts
 
 # API specs (internal reference)
 APIs/
+
+# Claude Code local settings
+.claude/settings.local.json

@@ -23,7 +23,7 @@ interface ChatMessageResponse {
   message_id: string
   response_message_id: string
   response: string
-  carbon_gco2eq: number | null
+  tokens_deducted: number | null
   tokens_remaining: number
   exhausted: boolean
   session_title: string | null
@@ -34,7 +34,7 @@ interface ChatMessageFromApi {
   session_id: string
   role: 'user' | 'assistant'
   content: string
-  carbon_gco2eq: number | null
+  tokens_deducted: number | null
   created_at: string
 }
 
@@ -90,7 +90,7 @@ function ChatContent() {
             id: m.id,
             role: m.role,
             content: m.content,
-            carbonCost: m.role === 'assistant' ? m.carbon_gco2eq : undefined,
+            carbonCost: m.role === 'assistant' ? m.tokens_deducted : undefined,
           }))
         )
       })
@@ -156,14 +156,13 @@ function ChatContent() {
         { method: 'POST', body: { message: text, model_id: selectedModel }, skipAutoRedirect: true }
       )
       updateRemainingTokens(res.tokens_remaining)
-
       setMessages((prev) => [
         ...prev,
         {
           id: res.response_message_id,
           role: 'assistant',
           content: res.response,
-          carbonCost: res.carbon_gco2eq,
+          carbonCost: res.tokens_deducted,
         },
       ])
     } catch (err) {
@@ -226,14 +225,24 @@ function ChatContent() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-3">
             {toggleButton}
-            <h1 className="text-xl font-bold text-gray-900 flex-1">GreenBrain</h1>
+            <h1 className="text-xl font-bold text-gray-900 flex-1">Anoixi</h1>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-gray-700">탄소 토큰</span>
-              <span className={`text-sm font-bold ${tokens.remaining <= 30 ? 'text-red-500' : 'text-gray-900'}`}>
-                {isTokenLoading ? '...' : `${tokens.remaining} / ${tokens.max} gCO₂eq`}
+              <span className={`text-sm font-bold ${tokens.remaining <= 3000 ? 'text-red-500' : 'text-gray-900'}`}>
+                {isTokenLoading ? '...' : (
+                  <>
+                    {Math.round(tokens.remaining)}
+                    {' / '}
+                    {tokens.max}
+                    {tokens.remaining > tokens.max && (
+                      <span className="text-blue-500"> +{Math.round(tokens.remaining - tokens.max)}</span>
+                    )}
+                    {' mgCO₂eq'}
+                  </>
+                )}
               </span>
             </div>
             <TokenBar remaining={isTokenLoading ? tokens.max : tokens.remaining} max={tokens.max} />
@@ -267,9 +276,7 @@ function ChatContent() {
         </div>
       ) : !hasStarted ? (
         <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-          <div className="w-20 h-20 bg-linear-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
-            <span className="text-4xl">🌱</span>
-          </div>
+          <img src="/icon.png" alt="Anoixi" className="w-32 h-32 object-contain mb-6" />
           <h2 className="text-3xl font-bold text-gray-900 leading-snug">
             {username}님,<br />다시 오셨네요
           </h2>

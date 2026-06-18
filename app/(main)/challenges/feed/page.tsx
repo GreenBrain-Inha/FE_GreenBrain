@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import SkeletonCard from '@/components/SkeletonCard'
 import EmptyState from '@/components/EmptyState'
 import { useApp } from '@/contexts/AppContext'
-import { apiFetch } from '@/lib/api'
+import { apiFetch, fixStorageUrl } from '@/lib/api'
 import { useSidebar } from '@/contexts/SidebarContext'
 
 interface FeedItem {
@@ -55,11 +55,13 @@ function FeedCard({
   isOwner,
   onDelete,
   onLikeToggle,
+  onReward,
 }: {
   item: FeedItem
   isOwner: boolean
   onDelete: (photoId: string) => void
   onLikeToggle: (photoId: string) => Promise<LikeResponse | void>
+  onReward: (tokens: number) => void
 }) {
   const { updateRemainingTokens } = useApp()
   const [likeCount, setLikeCount] = useState(item.like_count)
@@ -78,8 +80,8 @@ function FeedCard({
     try {
       const res = await onLikeToggle(item.photo_id)
       if (res?.like_count != null) setLikeCount(res.like_count)
-      if (res?.reward_given) {
-        updateRemainingTokens(res.tokens_remaining)
+      if (res?.reward_given && res.tokens_remaining != null) {
+        onReward(res.tokens_remaining)
       }
     } catch {
       setLikedByMe(false)
@@ -102,7 +104,7 @@ function FeedCard({
           <div className="flex items-center gap-3">
             {item.profile_image_url ? (
               <img
-                src={item.profile_image_url}
+                src={fixStorageUrl(item.profile_image_url)}
                 alt={item.nickname ?? ''}
                 className="w-9 h-9 rounded-full object-cover bg-gray-100"
               />
@@ -128,7 +130,7 @@ function FeedCard({
 
       <div className="relative">
         <img
-          src={item.photo_url}
+          src={fixStorageUrl(item.photo_url)}
           alt={item.title}
           className="w-full aspect-square object-cover bg-gray-100"
         />
@@ -190,7 +192,7 @@ function FeedCard({
           </button>
           {item.carbon_saved_gco2eq != null && (
             <span className="text-xs text-gray-400">
-              -{item.carbon_saved_gco2eq}g CO₂
+              -{item.carbon_saved_gco2eq}mg CO₂
             </span>
           )}
         </div>
@@ -201,7 +203,7 @@ function FeedCard({
 }
 
 export default function ChallengeFeedPage() {
-  const { user } = useApp()
+  const { user, updateRemainingTokens } = useApp()
   const { toggleButton } = useSidebar()
   const [feedItems, setFeedItems] = useState<FeedItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -255,7 +257,7 @@ export default function ChallengeFeedPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               <p className="text-sm text-green-700">
-                인증 사진에 <span className="font-semibold">좋아요</span>를 눌러 응원해보세요! 좋아요 3개당 +20 토큰이 지급됩니다.
+                인증 사진에 <span className="font-semibold">좋아요</span>를 눌러 응원해보세요! 좋아요 3개당 +2000 토큰이 지급됩니다.
               </p>
             </div>
           </div>
@@ -293,6 +295,7 @@ export default function ChallengeFeedPage() {
                   isOwner={user?.id === item.user_id}
                   onDelete={handleDelete}
                   onLikeToggle={handleLikeToggle}
+                  onReward={updateRemainingTokens}
                 />
               ))}
             </div>
