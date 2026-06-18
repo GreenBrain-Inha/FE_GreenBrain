@@ -63,6 +63,7 @@ function FeedCard({
   onLikeToggle: (photoId: string) => Promise<LikeResponse | void>
   onReward: (tokens: number) => void
 }) {
+  const { updateRemainingTokens } = useApp()
   const [likeCount, setLikeCount] = useState(item.like_count)
   const [likedByMe, setLikedByMe] = useState(item.liked_by_me)
   const [likeLoading, setLikeLoading] = useState(false)

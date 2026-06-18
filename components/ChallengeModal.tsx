@@ -16,6 +16,12 @@ interface ChallengeData {
   completed_at: string | null
 }
 
+interface PhotoUploadResponse {
+  reward: {
+    tokens_remaining: number
+  }
+}
+
 interface ChallengeModalProps {
   open: boolean
   onClose: () => void
@@ -152,8 +158,8 @@ export default function ChallengeModal({ open, onClose }: ChallengeModalProps) {
       }
 
       handleClose()
-    } catch {
-      setFileError('업로드에 실패했습니다. 다시 시도해주세요.')
+    } catch (err: any) {
+      setFileError(err.data?.message || '업로드에 실패했습니다. 다시 시도해주세요.')
     } finally {
       setIsUploading(false)
     }
